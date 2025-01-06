@@ -73,9 +73,9 @@ int main() {
     printf("Result after evaluation = %d\n", postfixeval(str));
     return 0;
 }
-==============output:
-mlds25@ritserver:~$ vi postfix.c
-mlds25@ritserver:~$ cc postfix.c
-mlds25@ritserver:~$ ./a.out
-Enter the postfix expression: 231*+9-
-Result after evaluation = -4
+// ==============output:
+// mlds25@ritserver:~$ vi postfix.c
+// mlds25@ritserver:~$ cc postfix.c
+// mlds25@ritserver:~$ ./a.out
+// Enter the postfix expression: 231*+9-
+// Result after evaluation = -4
