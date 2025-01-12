@@ -2,142 +2,95 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct Node {
+typedef struct node *nodePtr;
+typedef struct node {
+    nodePtr llink;
     int data;
-    struct Node *next;
-    struct Node *prev;
-};
+    nodePtr rlink;
+} node;
 
-struct Node* createNode(int data) {
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->next = newNode->prev = NULL;
-    return newNode;
+nodePtr head;
+
+void dinsert() {
+    int n;
+    nodePtr temp;
+    printf("Enter the info for the new node\n");
+    scanf("%d", &n);
+    temp = (nodePtr)malloc(sizeof(node));
+    temp->data = n;
+    temp->llink = head;
+    temp->rlink = head->rlink;
+    head->rlink->llink = temp;
+    head->rlink = temp;
 }
 
-void insert(struct Node* header, int data, int position) {
-    struct Node* newNode = createNode(data);
-    
-    if (header->next == header) {
-        header->next = header->prev = newNode;
-        newNode->next = newNode->prev = header;
-        return;
+void ddelete() {
+    nodePtr temp = head->rlink;
+    if (head->rlink == head)
+        printf("Deletion of head node not permitted.\n");
+    else {
+        head->rlink = temp->rlink;
+        temp->rlink->llink = head;
+        printf("Removing node with data %d\n", temp->data);
+        free(temp);
     }
-    
-    if (position == 1) {
-        newNode->next = header->next;
-        newNode->prev = header;
-        header->next->prev = newNode;
-        header->next = newNode;
-        return;
-    }
-    
-    struct Node* current = header->next;
-    int count = 1;
-    
-    while (count < position - 1 && current->next != header) {
-        current = current->next;
-        count++;
-    }
-    
-    newNode->next = current->next;
-    newNode->prev = current;
-    current->next->prev = newNode;
-    current->next = newNode;
 }
 
-void delete(struct Node* header, int position) {
-    if (header->next == header) {
-        printf("List is empty\n");
-        return;
+void displayRight() {
+    nodePtr temp;
+    if (head->rlink == head)
+        printf("Empty list.\n");
+    else {
+        for (temp = head->rlink; temp->rlink != head; temp = temp->rlink)
+            printf("%d\t", temp->data);
+        printf("%d\t", temp->data);
+        printf("\n\n");
     }
-    
-    struct Node* current = header->next;
-    int count = 1;
-    
-    while (count < position && current != header) {
-        current = current->next;
-        count++;
-    }
-    
-    if (current == header) {
-        printf("Position not found\n");
-        return;
-    }
-    
-    current->prev->next = current->next;
-    current->next->prev = current->prev;
-    free(current);
 }
 
-void displayForward(struct Node* header) {
-    if (header->next == header) {
-        printf("List is empty\n");
-        return;
+void displayLeft() {
+    nodePtr temp;
+    if (head->llink == head)
+        printf("Empty list.\n");
+    else {
+        for (temp = head->llink; temp->llink != head; temp = temp->llink)
+            printf("%d\t", temp->data);
+        printf("%d\t", temp->data);
+        printf("\n\n");
     }
-    
-    struct Node* current = header->next;
-    printf("Forward List: ");
-    while (current != header) {
-        printf("%d ", current->data);
-        current = current->next;
-    }
-    printf("\n");
-}
-
-void displayReverse(struct Node* header) {
-    if (header->next == header) {
-        printf("List is empty\n");
-        return;
-    }
-    
-    struct Node* current = header->prev;
-    printf("Reverse List: ");
-    while (current != header) {
-        printf("%d ", current->data);
-        current = current->prev;
-    }
-    printf("\n");
 }
 
 int main() {
-    struct Node* header = createNode(0);
-    header->next = header->prev = header;
-    int choice, data, position;
-    
+    unsigned int choice;
+    head = (nodePtr)malloc(sizeof(node));
+    head->rlink = head;
+    head->llink = head;
+
     while (1) {
-        printf("\n1. Insert\n2. Delete\n3. Display Forward\n4. Display Reverse\n5. Exit\n");
-        printf("Enter choice: ");
-        scanf("%d", &choice);
-        
+        printf("\n1: Insert a node in DLL\n");
+        printf("2: Delete a node from DLL\n");
+        printf("3: Display the DLL Backward\n");
+        printf("4: Display the DLL Forward\n");
+        printf("5: Exit\n");
+        scanf("%u", &choice);
         switch (choice) {
             case 1:
-                printf("Enter data and position: ");
-                scanf("%d %d", &data, &position);
-                insert(header, data, position);
+                dinsert();
                 break;
-                
             case 2:
-                printf("Enter position to delete: ");
-                scanf("%d", &position);
-                delete(header, position);
+                ddelete();
                 break;
-                
             case 3:
-                displayForward(header);
+                displayRight();
                 break;
-                
             case 4:
-                displayReverse(header);
+                displayLeft();
                 break;
-                
             case 5:
                 exit(0);
-                
             default:
-                printf("Invalid choice\n");
+                printf("Invalid choice... try again\n");
         }
     }
-    
     return 0;
 }
